@@ -91,54 +91,79 @@ total_urls = ["https://www.sensacine.com/actores/top/mas-vistos/"]
 
 
 miDiccionarioDos ={
-    'posicion':'',
     'nombre':'',
-    'descripcion':''
+    'descripcion':'',
+    'imagen':'',
+    'composiciones':''
 }
 
-
-posicion =[]
 nombre =[]
 descripcion =[]
+imagen = []
 
+composiciones = {}
 
-def todas_urls_dos():
+prueba=[]
+prueba2=[]
 
-    contador = 2
-
-    for a in range(9):
-        nueva_url = "https://www.sensacine.com/actores/top/mas-vistos/?page="+str(contador)
-        total_urls.append(nueva_url)
-        contador += 2
 
 
 
 def cargar_url_dos():
 
-    for a in total_urls:
-        url= a
-        req = requests.get(url)
-        soup= BeautifulSoup(req.text, "html.parser")
 
-        for i in soup.findAll("div", {"class": "label label-text label-sm label-primary-full label-ranking"}):
-            i1= (i.get_text())
-            posicion.append(int(i1))
-            miDiccionarioDos['posicion']= posicion
 
-        for o in soup.findAll("a", {"class": "meta-title-link"}):
-            o1= o.text
-            nombre.append(o1)
+     url= "https://www.mobafire.com/teamfight-tactics/items-cheatsheet#items-cheatsheet"
+     req = requests.get(url)
+     soup= BeautifulSoup(req.text, "html.parser")
+
+     for i in soup.findAll("div", {"class": "items-wrap__details__item__description"}):
+            i1= i.find_next().get_text()
+            nombre.append(i1)
             miDiccionarioDos['nombre']= nombre
 
-        for a in soup.findAll("div", {"class": "meta-body-item meta-body-info light"}):
-            a1= a.text
-            descripcion.append(a1)
-            miDiccionarioDos['descripcion']= descripcion
+
+     for i in soup.findAll("div", {"class": "items-wrap__details__item__description"}):
+        i1 = i.find_next().find_next().get_text().replace('\n',' ')
+        descripcion.append(i1)
+        miDiccionarioDos['descripcion'] = descripcion
+
+     for i in soup.findAll("div", {"class": "items-wrap__details__item__pic"}):
+        i1 = str(i.find_next('img')).replace('<img src="','').replace('"/>','')
+        imagen.append(i1)
+        miDiccionarioDos['imagen'] = imagen
 
 
-todas_urls_dos()
+     url2 = "https://www.mobafire.com/teamfight-tactics/team-comps"
+     req2 = requests.get(url2)
+     soup = BeautifulSoup(req2.text, "html.parser")
+
+     for i in soup.findAll("div", {"class": "champ-wrap"}):
+        i1 = i.find_next().attrs['alt']
+        prueba.append(i1)
+
+     for i in soup.findAll("div", {"class": "tft-row__title"}):
+        i1 = i.get_text().replace('\xa0','')
+        prueba2.append(i1)
+
+
+
+     composiciones[prueba2[0]] = prueba[0:9]
+     composiciones[prueba2[1]] = prueba[18:25]
+     composiciones[prueba2[2]] = prueba[34:42]
+     composiciones[prueba2[3]] = prueba[50:58]
+     composiciones[prueba2[4]] = prueba[68:75]
+     composiciones[prueba2[5]] = prueba[84:92]
+     composiciones[prueba2[6]] = prueba[101:109]
+     composiciones[prueba2[7]] = prueba[118:127]
+     composiciones[prueba2[8]] = prueba[130:139]
+
+     miDiccionarioDos['composiciones']= composiciones
+
+
+
 cargar_url_dos()
-print(descripcion
+print(miDiccionarioDos
 )
 
 
